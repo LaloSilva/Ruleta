@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="jquery-3.7.1.min.js" type="text/javascript"></script>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/index.css" />
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ruleta</title>
+        
+    </head>
+    <body>
+        <div class="contenedor">
+            <h1>Concursantes</h1>
+            <div class="concursantes">
+                <canvas id="idcanvas" width="600" height="600"></canvas>
+                <br>
+                <button onclick="sortear()"><span id="idestado">Sortear</span></button>
+                <div class="mark-winner"></div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            const array_concursantes=
+            [
+                
+                'Mimica'
+                ,'Cantada'
+                ,'Castigo'
+                ,'Chiste'
+                ,'Historia Embarazoza'
+                ,'Castigo'
+                ,'Ejercicio'
+                , 'Secreto'
+            ];
+    
+            let canvas=document.getElementById("idcanvas");
+            let context=canvas.getContext("2d");
+            let center=canvas.width/2;
+    
+            context.beginPath();
+            context.moveTo(center,center);
+            context.arc(center,center,center,0, 2*Math.PI);
+            context.lineTo(center,center);
+            context.fillStyle ='#33333333';
+            context.fill();
+    
+            context.beginPath();
+            context.moveTo(center,center);
+            context.arc(center,center,center-10,0, 2*Math.PI);
+            context.lineTo(center,center);
+            context.fillStyle ='black';
+            context.fill();
+    
+            for (var i = 0; i < array_concursantes.length; i++) {
+                context.beginPath();
+                context.moveTo(center,center);
+                context.arc(center,center,center-20,i*2*Math.PI/array_concursantes.length, (i+1)*2*Math.PI/array_concursantes.length);
+                context.lineTo(center,center);
+                context.fillStyle =random_color();
+                context.fill();
+    
+                context.save();
+                context.translate(center, center);
+                context.rotate(3*2*Math.PI/(5*array_concursantes.length)+i*2*Math.PI/array_concursantes.length);
+                context.translate(-center, -center);
+                context.font = "13px Comic Sans MS";
+                context.textAlign = "right";
+                context.fillStyle = "white";
+                context.fillText(array_concursantes[i], canvas.width-30, center);
+                context.restore();
+            }
+    
+            let pos_ini = 0;
+            let velocidad = 20;
+            let clic=0;
+            let movement;
+            function sortear() {
+            if (clic == 0) {
+                let canvas = document.getElementById("idcanvas");
+                movement = setInterval(function() {
+                    pos_ini += velocidad;
+                    canvas.style.transform = 'rotate(' + pos_ini + 'deg)';
+                    // Reducir la velocidad gradualmente
+                    if (velocidad > 1) {
+                        velocidad -= 0.2; // Ajusta el decremento de velocidad según sea necesario
+                    }
+                    // Detener la animación cuando la velocidad sea muy baja
+                    if (velocidad <= 1) {
+                        clearInterval(movement);
+                        clic = 0;
+                        velocidad = 20
+                        document.getElementById("idestado").innerHTML = "Sortear";
+                    }
+                }, 50);
+                clic = 1;
+                document.getElementById("idestado").innerHTML = "Detener";
+            } else {
+                clearInterval(movement);
+                clic = 0;
+                velocidad = 20
+                document.getElementById("idestado").innerHTML = "Sortear";
+            }
+        }
+    
+            function random_color(){
+                let ar_digit=['2','3','4','5','6','7','8','9'];
+                let color='';
+                let i=0;
+                while(i<6){
+                    let pos=Math.round(Math.random()*(ar_digit.length-1));
+                    color=color+''+ar_digit[pos];
+                    i++;
+                }
+                return '#'+color;
+            }
+        </script>
+    </body>
+</html>
